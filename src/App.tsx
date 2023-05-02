@@ -1,35 +1,41 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import './App.css'
+// import Header from "./header";
+// import { BrowserRouter, Routes, Route } from "react-router-dom";
+// import PropertyCard from "./PropertyCard";
 
-function App() {
-  const [count, setCount] = useState(0)
+// Importer "fetch" dans votre composant React :
 
-  return (
-    <>
-      <div>
-        <a href="https://vitejs.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.tsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
-    </>
-  )
+import React, { useEffect, useState } from "react";
+// import Content from "./content";
+
+export interface EventType {
+  name: String;
+  date: Number;
+  description: Text;
 }
 
-export default App
+// Définir un état pour stocker les données de l'API :
+function App() {
+  const [event, setEvent] = useState<EventType[]>([]);
+
+  // Utiliser la méthode "useEffect" pour effectuer la requête API une seule fois au chargement de la page :
+
+  useEffect(() => {
+    fetch("http://127.0.0.1:8001/api/events")
+      .then((response) => response.json())
+      .then((data) => {
+        setEvent(data["hydra:member"]);
+        console.log(data["hydra:member"]);
+      })
+      .catch((error) => console.log(error));
+  }, []);
+
+  // Utiliser les données de l'API dans votre composant :
+
+  return (
+    <div className="App">
+      <h1 className="text-purple-600	">bonsoir</h1>
+    </div>
+  );
+}
+
+export default App;
