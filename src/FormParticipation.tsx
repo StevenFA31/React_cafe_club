@@ -1,60 +1,98 @@
-function FormParticipation() {
+import { useState, useEffect, FormEvent } from "react";
+import { EventType } from "./Home";
+
+function ParticipationForm() {
+    const [firstname, setFirstname] = useState("");
+    const [lastname, setLastname] = useState("");
+    const [phone, setPhone] = useState("");
+    const [eventId, setEventId] = useState("");
+    const [events, setEvents] = useState<EventType[]>([]);
+
+    useEffect(() => {
+        fetch("http://127.0.0.1:8001/api/events")
+            .then((response) => response.json())
+            .then((data) => {
+                setEvents(data["hydra:member"]);
+                console.log(data["hydra:member"]);
+            })
+            .catch((error) => console.log(error));
+    }, []);
+
+    const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
+        e.preventDefault();
+        const data = {
+            firstname: firstname,
+            lastname: lastname,
+            phone: phone,
+            event: `/api/events/${eventId}`,
+        };
+
+        fetch("http://127.0.0.1:8001/api/participations", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify(data),
+        })
+            .then((response) => response.json())
+            .then((data) => console.log(data))
+            .catch((error) => console.log(error));
+    };
+
     return (
-        <form>
-            <div className="mb-6">
-                <label
-                    htmlFor="email"
-                    className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
-                >
-                    Your email
-                </label>
+        <form onSubmit={handleSubmit}>
+            <div>
+                <label htmlFor="firstname">Firstname : </label>
                 <input
-                    type="email"
-                    id="email"
-                    className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                    placeholder="name@flowbite.com"
-                    required
+                    type="text"
+                    id="firstname"
+                    name="firstname"
+                    value={firstname}
+                    onChange={(e) => setFirstname(e.target.value)}
                 />
             </div>
-            <div className="mb-6">
-                <label
-                    htmlFor="password"
-                    className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
-                >
-                    Your password
-                </label>
+            <div>
+                <label htmlFor="lastname">Lastname : </label>
                 <input
-                    type="password"
-                    id="password"
-                    className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                    required
+                    type="text"
+                    id="lastname"
+                    name="lastname"
+                    value={lastname}
+                    onChange={(e) => setLastname(e.target.value)}
                 />
             </div>
-            <div className="flex items-start mb-6">
-                <div className="flex items-center h-5">
-                    <input
-                        id="remember"
-                        type="checkbox"
-                        value=""
-                        className="w-4 h-4 border border-gray-300 rounded bg-gray-50 focus:ring-3 focus:ring-blue-300 dark:bg-gray-700 dark:border-gray-600 dark:focus:ring-blue-600 dark:ring-offset-gray-800 dark:focus:ring-offset-gray-800"
-                        required
-                    />
-                </div>
-                <label
-                    htmlFor="remember"
-                    className="ml-2 text-sm font-medium text-gray-900 dark:text-gray-300"
-                >
-                    Remember me
-                </label>
+            <div>
+                <label htmlFor="phone">Phone : </label>
+                <input
+                    type="text"
+                    id="phone"
+                    name="phone"
+                    value={phone}
+                    onChange={(e) => setPhone(e.target.value)}
+                />
             </div>
-            <button
-                type="submit"
-                className="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
-            >
-                Submit
-            </button>
+            <div>
+                <label htmlFor="event">Event : </label>
+                <select
+                    id="event"
+                    name="event"
+                    value={eventId}
+                    onChange={(e) => setEventId(e.target.value)}
+                >
+                    <option value="">Select an event</option>
+                    {events.map((event) => (
+                        <option
+                            key={event.id.toString()}
+                            value={event.id.toString()}
+                        >
+                            {event.name}
+                        </option>
+                    ))}
+                </select>
+            </div>
+            <button type="submit">Submit</button>
         </form>
     );
 }
 
-export default FormParticipation;
+export default ParticipationForm;
