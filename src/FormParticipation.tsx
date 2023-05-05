@@ -5,7 +5,7 @@ function ParticipationForm() {
     const [firstname, setFirstname] = useState("");
     const [lastname, setLastname] = useState("");
     const [phone, setPhone] = useState("");
-    const [eventId, setEventId] = useState("");
+    const [eventId, setEventId] = useState<number>();
     const [events, setEvents] = useState<EventType[]>([]);
 
     useEffect(() => {
@@ -17,14 +17,17 @@ function ParticipationForm() {
             })
             .catch((error) => console.log(error));
     }, []);
-
     const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
         e.preventDefault();
+        if (!eventId) {
+            alert("Please select an event.");
+            return;
+        }
         const data = {
             firstname: firstname,
             lastname: lastname,
             phone: phone,
-            event: `/api/events/${eventId}`,
+            event: eventId,
         };
 
         fetch("http://127.0.0.1:8001/api/participations", {
@@ -73,22 +76,32 @@ function ParticipationForm() {
             </div>
             <div>
                 <label htmlFor="event">Event : </label>
-                <select
-                    id="event"
-                    name="event"
-                    value={eventId}
-                    onChange={(e) => setEventId(e.target.value)}
-                >
-                    <option value="">Select an event</option>
-                    {events.map((event) => (
-                        <option
-                            key={event.id.toString()}
-                            value={event.id.toString()}
-                        >
-                            {event.name}
-                        </option>
-                    ))}
-                </select>
+                {
+                    <select
+                        id="event"
+                        name="event"
+                        value={eventId}
+                        onChange={(e) => {
+                            const id = parseInt(
+                                e.target.value.split("/").pop() || "0"
+                            );
+                            setEventId(id);
+                            if (!isNaN(id)) {
+                                setEventId(id);
+                            }
+                        }}
+                    >
+                        <option value="">Select an event</option>
+                        {events.map((event) => (
+                            <option
+                                key={event.id}
+                                value={parseInt(event.id.split("/").pop())}
+                            >
+                                {event.name}
+                            </option>
+                        ))}
+                    </select>
+                }
             </div>
             <button type="submit">Submit</button>
         </form>

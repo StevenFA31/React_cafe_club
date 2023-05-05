@@ -18,7 +18,6 @@ function Home() {
             .then((response) => response.json())
             .then((data) => {
                 setEvent(data["hydra:member"]);
-                console.log(data["hydra:member"]);
             })
             .catch((error) => console.log(error));
     }, []);
@@ -28,10 +27,12 @@ function Home() {
             <div>
                 <h1>Bienvenue sur ma page</h1>
                 <p>
-                    Cliquez sur le lien ci-dessous pour accéder à une autre
-                    page:
+                    Cliquez sur le lien ci-dessous pour accéder à la page de
+                    souscription d'évènement:
                 </p>
-                <Link to="/autre-page">Aller vers une autre page</Link>
+                <Link className="text-cyan-600	" to="/souscription">
+                    Aller vers une la page de souscription
+                </Link>
             </div>
         </>
     );
